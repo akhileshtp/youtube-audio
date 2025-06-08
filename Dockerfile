@@ -24,9 +24,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-# 5. Install yt-dlp using pip
-#    The --no-cache-dir flag helps keep the image size down by not storing the download cache.
-RUN pip3 install --no-cache-dir yt-dlp
+# Create a directory for the virtual environment
+ENV VENV_PATH=/opt/venv
+RUN python3 -m venv $VENV_PATH
+
+# Activate the virtual environment and install yt-dlp into it
+# Note: Activating in Dockerfile RUN commands is tricky.
+# Instead, we directly use the pip from the venv.
+RUN $VENV_PATH/bin/pip install --no-cache-dir yt-dlp
+
+# Now, when you run yt-dlp, you need to ensure it uses the one from the venv.
+# One way is to add the venv's bin to the PATH.
+ENV PATH="$VENV_PATH/bin:$PATH"
 
 # 6. Verify installations (Optional but highly recommended for debugging build issues)
 #    This helps confirm that the tools are installed and accessible in the PATH.
