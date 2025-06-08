@@ -1,0 +1,137 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: white;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 550px;
+}
+
+h1 {
+    color: #1c1e21;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+#youtubeUrl {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccd0d5;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#youtubeUrl:focus {
+    border-color: #1877f2; /* Facebook blue */
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    outline: none;
+}
+
+
+.format-selector {
+    margin-bottom: 25px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the selector items */
+}
+
+.format-selector label {
+    margin-right: 10px;
+    font-weight: 500;
+    color: #333;
+}
+
+#format {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccd0d5;
+    font-size: 15px;
+    background-color: white;
+    cursor: pointer;
+}
+
+#format:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    outline: none;
+}
+
+
+#downloadBtn {
+    background-color: #1877f2; /* Facebook blue */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    width: auto; /* Adjust width as needed or make it 100% */
+}
+
+#downloadBtn:hover {
+    background-color: #166fe5; /* Slightly darker blue */
+}
+
+#downloadBtn:disabled {
+    background-color: #e4e6eb; /* Light gray for disabled */
+    color: #bcc0c4; /* Darker gray text for disabled */
+    cursor: not-allowed;
+}
+
+#status {
+    margin-top: 20px;
+    font-size: 0.95em;
+    min-height: 22px; /* Reserve space */
+    line-height: 1.4;
+}
+
+.status-success {
+    color: #31a24c; /* Green */
+}
+
+.status-error {
+    color: #fa383e; /* Red */
+}
+
+.status-processing {
+    color: #1877f2; /* Blue */
+}
+
+
+#downloadLinkContainer a {
+    display: inline-block;
+    margin-top: 15px;
+    background-color: #42b72a; /* Green */
+    color: white;
+    padding: 10px 18px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#downloadLinkContainer a:hover {
+    background-color: #36a420; /* Darker green */
+}

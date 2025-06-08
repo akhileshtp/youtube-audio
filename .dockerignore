@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+README.md
+# If you have a local 'downloads' folder for testing, prevent it from being copied into the image
+# The Dockerfile creates its own 'downloads' folder inside the image.
+# downloads/
