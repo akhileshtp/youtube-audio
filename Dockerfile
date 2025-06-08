@@ -4,7 +4,7 @@ FROM node:18-slim
 
 # 2. Set Environment Variables (Optional but good practice for consistency)
 ENV NODE_ENV=production
-ENV PORT=3000 # Default port; Render will provide its own via an environment variable
+ENV PORT=3000
 
 # 3. Create app directory and set as working directory
 WORKDIR /usr/src/app
@@ -24,7 +24,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
 # 5. Install yt-dlp using pip
 #    The --no-cache-dir flag helps keep the image size down by not storing the download cache.
 RUN pip3 install --no-cache-dir yt-dlp
