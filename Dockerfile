@@ -49,12 +49,7 @@ COPY package*.json ./
 #    npm cache clean --force helps reduce image size further.
 RUN npm install --only=production --no-optional && npm cache clean --force
 
-# 9. Copy the rest of your application code into the container's WORKDIR
-COPY . .
 
-# 10. Create the 'downloads' directory within the WORKDIR
-#     This directory is used by server.js to store temporary downloads.
-#     Ensure the Node.js process (running as 'node' user) has permissions to write to it.
 RUN mkdir -p /usr/src/app/downloads && chown -R node:node /usr/src/app/downloads
 
 # 11. Switch to a non-root user for security best practices
