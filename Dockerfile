@@ -12,6 +12,7 @@ WORKDIR /usr/src/app
 # 4. Install system dependencies:
 #    - ffmpeg: Essential for audio/video processing used by yt-dlp.
 #    - python3 & python3-pip: To install and run yt-dlp (which is a Python application).
+#    - python3-venv: ENABLES CREATING VIRTUAL ENVIRONMENTS.
 #    - build-essential & python3-dev: Crucial for compiling Python package C extensions
 #      if pip needs to build them from source (often required for some dependencies).
 #    - curl: General utility for downloading files if needed (e.g., alternative yt-dlp install).
@@ -19,45 +20,47 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     python3 \
     python3-pip \
+    python3-venv \    # <-- CORRECTLY ADDED HERE
     build-essential \
     python3-dev \
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-# Create a directory for the virtual environment
+
+# 5. Create and use a Python virtual environment for yt-dlp
 ENV VENV_PATH=/opt/venv
+# Create the virtual environment
 RUN python3 -m venv $VENV_PATH
-
-# Activate the virtual environment and install yt-dlp into it
-# Note: Activating in Dockerfile RUN commands is tricky.
-# Instead, we directly use the pip from the venv.
+# Install yt-dlp into the virtual environment using the venv's pip
 RUN $VENV_PATH/bin/pip install --no-cache-dir yt-dlp
-
-# Now, when you run yt-dlp, you need to ensure it uses the one from the venv.
-# One way is to add the venv's bin to the PATH.
+# Add the virtual environment's bin directory to the PATH
+# This ensures that 'yt-dlp' calls use the one from the venv
 ENV PATH="$VENV_PATH/bin:$PATH"
 
 # 6. Verify installations (Optional but highly recommended for debugging build issues)
 #    This helps confirm that the tools are installed and accessible in the PATH.
 RUN ffmpeg -version
-RUN yt-dlp --version
+RUN yt-dlp --version  # This should now use the yt-dlp from the venv
 RUN node --version
 RUN npm --version
-RUN python3 --version
-RUN pip3 --version
+RUN python3 --version # This will be the system Python
+RUN pip3 --version    # This will be the system pip (outside venv)
+RUN which yt-dlp      # Should show path inside /opt/venv/bin/
 
 # 7. Copy package.json and package-lock.json (if available)
-#    This leverages Docker's layer caching. These files change less often than app code,
-#    so their layer can be reused if they haven't changed, speeding up subsequent builds.
+#    This leverages Docker's layer caching.
 COPY package*.json ./
 
 # 8. Install Node.js application dependencies
 #    --only=production ensures only production dependencies are installed.
-#    --no-optional skips optional dependencies.
-#    npm cache clean --force helps reduce image size further.
 RUN npm install --only=production --no-optional && npm cache clean --force
 
+# 9. Copy the rest of your application code into the container's WORKDIR
+COPY . .
 
+# 10. Create the 'downloads' directory within the WORKDIR
+#     This directory is used by server.js to store temporary downloads.
+#     Ensure the Node.js process (running as 'node' user) has permissions to write to it.
 RUN mkdir -p /usr/src/app/downloads && chown -R node:node /usr/src/app/downloads
 
 # 11. Switch to a non-root user for security best practices
@@ -65,8 +68,6 @@ RUN mkdir -p /usr/src/app/downloads && chown -R node:node /usr/src/app/downloads
 USER node
 
 # 12. Expose the port the app runs on internally within the container.
-#     Render (or other hosting platforms) will map an external port to this internal port.
-#     This should match the PORT your application listens on (process.env.PORT || 3000).
 EXPOSE 3000
 
 # 13. Define the command to run your application when the container starts.
