@@ -1,3 +1,4 @@
+// public/script.js
 document.addEventListener('DOMContentLoaded', () => {
     const urlInput = document.getElementById('youtubeUrl');
     const formatSelect = document.getElementById('format');
@@ -14,10 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Improved YouTube URL validation
-        const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9\-_]{11})(?:\S+)?$/;
+        // Updated YouTube URL validation to explicitly include /shorts/
+        // Also handles various forms like:
+        // - https://www.youtube.com/watch?v=VIDEO_ID
+        // - https://youtube.com/watch?v=VIDEO_ID
+        // - https://youtu.be/VIDEO_ID
+        // - https://www.youtube.com/embed/VIDEO_ID
+        // - https://www.youtube.com/shorts/VIDEO_ID
+        // - https://www.youtube.com/v/VIDEO_ID (older format)
+        // It captures the 11-character VIDEO_ID.
+        const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9\-_]{11})(?:\S+)?$/;
+
         if (!youtubeRegex.test(youtubeUrl)) {
-            updateStatus('Please enter a valid YouTube Video URL.', 'error');
+            updateStatus('Please enter a valid YouTube Video URL (including Shorts).', 'error');
             return;
         }
 
@@ -26,8 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadLinkContainer.innerHTML = ''; // Clear previous link
 
         try {
-            // The endpoint '/download-audio' is relative to the current host,
-            // which will be your Render URL once deployed.
             const response = await fetch('/download-audio', {
                 method: 'POST',
                 headers: {
@@ -41,10 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok && result.success) {
                 updateStatus(result.message || 'Audio ready!', 'success');
                 const link = document.createElement('a');
-                link.href = result.downloadUrl; // This URL is provided by the server
+                link.href = result.downloadUrl;
                 link.textContent = `Download ${selectedFormat.toUpperCase()} File`;
-                // The 'download' attribute can suggest a filename, but Content-Disposition from server is better.
-                // link.download = `audio.${selectedFormat}`; // Example, server should handle actual name
                 downloadLinkContainer.appendChild(link);
             } else {
                 updateStatus(`Error: ${result.message || 'Could not process the request.'}`, 'error');
